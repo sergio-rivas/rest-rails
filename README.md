@@ -266,6 +266,49 @@ And for has_many_attached:
 }
 ```
 
+## ACTIVESTORAGE ATTACHMENTS
+
+For activestorage attachment support, the following two routes are added to models using activestorage:
+
+`/table_name/:id/attach/:attachment_name` and `/table_name/:id/unattach/:attachment_id`
+
+### ATTACH:  POST '/table_name/:id/attach/:attachment_name'
+
+The routes generated for the rest API are based on the naming provided in your ActiveRecord model when using activestorage.
+
+- Supports both has_one_attached & has_many_attached.
+
+In the articles example above, this would be: "/api/v1/articles/attach/feature_image"
+
+The payload structure in this case needs only to be:
+```
+{
+  attachment: <file_uploaded>
+}
+```
+
+If successful, the response will be as follows:
+
+```
+{
+  "code": 200,
+  "msg": "success"
+}
+```
+
+### UNATTACH:  DELETE '/table_name/:id/unattach/:attachment_id'
+
+*\* Note, Response will fail if the attachment_id provided does not belong to the object.*
+
+If successful, the response will be as follows:
+
+```
+{
+  "code": 200,
+  "msg": "success"
+}
+```
+
 
 
 
