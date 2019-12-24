@@ -3,10 +3,33 @@ Rails Plugin for quick intelligent API Creation by Tuitu Technology Solutions
 
 ## How To Start
 
+### Step 1: Basic Setup
 1. Add To Gemfile: `gem 'rest_rails'`
 2. Bundle Install: `bundle install`
 3. Install RestRails:  `rails g rest_rails:install`
-4. Modify initializer and/or mounted route.
+
+### Step 2: Change Mounted Path (optional)
+1. Make sure the line `mount RestRails::Engine => '/api/v1', as: 'rest'` is at the *bottom* of your routes. (This will prevent RestRails from taking over any custom API routing you might do)
+2. Change '/api/v1' to whatever naming structure you would like to prepend REST API routes.
+
+### Step 3: Whitelist Permitted Columns (optional)
+1. For better security, it is strongly recommended to setup the initializer to whitelist your columns.
+
+Here is an example on how to whitelist columns for a sample database w/ three tables:  articles, comments, users.
+In this example, we only want the API to allow REST API endpoints for articles and comments, but not users.
+
+*Note: table_names are keys. Acceptable values include: (:all, :none, or an Array of column_names)*
+
+```
+RestRails.configure do |config|
+  # ...
+  config.permit = {
+    articles: :all,
+    users: :none,
+    comments: [:content]
+  }
+end
+```
 
 ## The Basics
 
@@ -52,9 +75,9 @@ destroy      | DELETE | `/api/v1/comments/:id`                       | destroy a
 fetch_column | GET    | `/api/v1/comments/:id/article_id`            | fetch article_id of comment
 fetch_column | GET    | `/api/v1/comments/:id/content`               | fetch content of comment
 
-# HOW TO USE THE REST API
+# Using the REST API
 
-## INDEX:  GET '/table_name'
+## Index
 GET '/articles' will return a JSON response as follows:
 ```
 {
@@ -110,7 +133,7 @@ article\[description\]\[\] | *Array*   | article\[description\]\[\]=SomeDescript
 article[content]           | *String*  | article[content]=Some+Content | Will match articles with contents same as the value.
 article\[content\]\[\]     | *Array*   | article\[content\]\[\]=SomeContent&article\[content\]\[\]=SomeOtherContent | Will match articles with content of 'SomeContent' OR 'SomeOtherContent'
 
-## SHOW:  GET '/table_name/:id'
+## Show
 GET '/articles/1' will return a JSON response as follows:
 ```
 {
@@ -139,7 +162,7 @@ GET '/articles/1' will return a JSON response as follows:
 }
 ```
 
-## CREATE:  POST '/table_name'
+## Create
 
 The create paths enforce Rails **strong params**. So only properly structured requests will be allowed.
 POST '/articles' can accept a payload in the following structure:
@@ -185,7 +208,7 @@ If successful (and passes your ActiveRecord validations), the response will be a
   }
 ```
 
-## UPDATE:  PATCH '/table_name/:id'
+## Update
 
 The update paths enforce Rails **strong params**. So only properly structured requests will be allowed.
 PATCH '/articles/1' can accept a payload in the following structure (with one or more columns to be updated):
@@ -230,7 +253,7 @@ If successful (and passes your ActiveRecord validations), the response will be a
   }
 ```
 
-## DESTROY:  DELETE '/table_name'
+## Destroy
 
 DELETE '/articles/1' only needs the ID number.
 
@@ -245,7 +268,7 @@ If successful (and passes your ActiveRecord validations), the response will be a
 
 **Note:**  If you are using activestorage, the destroy process will also automatically destroy attachments from your bucket.
 
-## FETCH_COLUMN:  GET '/table_name/:id/:column_name'
+## Fetch Column
 
 GET '/articles/1/title'
 
@@ -290,19 +313,21 @@ And for has_many_attached:
 }
 ```
 
-# ACTIVESTORAGE ATTACHMENTS
+# Activestorage Attachments
 
 For activestorage attachment support, the following two routes are added to models using activestorage:
 
 `/table_name/:id/attach/:attachment_name` and `/table_name/:id/unattach/:attachment_id`
 
-## ATTACH:  POST '/table_name/:id/attach/:attachment_name'
+## Attach
 
 The routes generated for the rest API are based on the naming provided in your ActiveRecord model when using activestorage.
 
 - Supports both has_one_attached & has_many_attached.
 
-In the articles example above, this would be: "/api/v1/articles/attach/feature_image"
+In the articles example above, this would be:
+
+POST  "/api/v1/articles/attach/feature_image"
 
 The payload structure in this case needs only to be:
 ```
@@ -320,7 +345,9 @@ If successful, the response will be as follows:
 }
 ```
 
-## UNATTACH:  DELETE '/table_name/:id/unattach/:attachment_id'
+## Unattach
+
+DELETE '/table_name/:id/unattach/:attachment_id'
 
 *\* Note, Response will fail if the attachment_id provided does not belong to the object.*
 
@@ -338,6 +365,6 @@ If successful, the response will be as follows:
 
 ## Contribution
 Here are some features in need of development.
-- Add way to "protect columns" (i.e. exclude columns from permitted params for model's update/create API points).
+- Add way to custom permit columns (i.e. exclude columns from permitted params for model's update/create API points).
 - Support different popular attachment gems.
 - Add Locale fetching based on page-routes.

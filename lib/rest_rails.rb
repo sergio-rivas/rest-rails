@@ -3,6 +3,7 @@ require "rest_rails/error"
 
 module RestRails
   mattr_accessor :debug, default: false
+  mattr_accessor :permit, default: :all
   mattr_accessor :authenticatable, default: false
   mattr_accessor :active_storage_attachments, default: true
   mattr_accessor :production_domain, default: nil

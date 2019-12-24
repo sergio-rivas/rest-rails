@@ -112,8 +112,6 @@ module RestRails
       return {} if params[mn].blank?
       # MAKE LIST OF THINGS TO PERMIT:
       arr = @model.attribute_names.map(&:to_sym)
-      arr.delete(:created_at)
-      arr.delete(:updated_at)
 
       # allow arrays for all columns for flexible where queries
       arr += arr.map do |attr|
@@ -159,25 +157,14 @@ module RestRails
     end
 
     def permitted_columns
-      @columns = @model.attribute_names.map(&:to_sym)
+      @columns = columns_for(@empty_obj)
       @columns.delete(:id)
       @columns.delete(:created_at)
       @columns.delete(:updated_at)
 
-      @columns.map! do |attr|
-        new_val = permit_array?(attr) ? {attr=>[]} : attr
-        new_val
-      end
-      permitted_attachments if RestRails.active_storage_attachments
-    end
-
-    def permitted_attachments
-      file_set = attachments_for(@empty_obj)
-      file_set += file_set.select{|x| permit_array?(x)}.map do |attr|
+      @columns += @columns.select{|x| permit_array?(x)}.map do |attr|
         {attr=>[]}
       end
-
-      @columns = @columns + file_set
     end
   end
 end

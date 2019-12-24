@@ -58,8 +58,20 @@ module RestRails
     end
 
     def columns_for(ar_object)
-      cols = ar_object.class.attribute_names.map(&:to_sym)
-      cols += attachments_for(ar_object)
+      [Hash, :all].each do |y|
+        x = RestRails.permit
+        raise RestRails::Error.new "RestRails initializer permit is not valid!" unless x.is_a?(y) || (x == y)
+      end
+
+      cols = ar_object.class.column_names.map(&:to_sym)
+      cols += attachments_for(ar_object) if RestRails.active_storage_attachments
+
+      return cols if RestRails.permit == :all || RestRails.permit[table] == :all
+
+      table = ar_object.class.table_name.to_sym
+      raise RestRails::Error.new "ACTION NOT PERMITTED" if [:none, nil].include?(RestRails.permit[table])
+
+      cols.select{|x| RestRails.permit[table].include?(x) }
     end
 
     # ==========================================================================

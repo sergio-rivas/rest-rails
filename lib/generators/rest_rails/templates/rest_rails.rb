@@ -4,6 +4,18 @@ RestRails.configure do |config|
   # set debug to true if you want to see loud errors in the server logs.
   config.debug = false
 
+  # ===============================================================
+  #                       IMPORTANT!
+  #    Setup whitelist permissions for what db columns can be
+  #      modified by the REST API
+  # ===============================================================
+  # config.permit = {
+  #  users: :none,
+  #  table_name: :all,
+  #  other_table: [:col1, :col2, :col3]
+  # }
+
+  # ===============================================================
   # if you are using devise or another authentication system and want to
   # enforce the before_action `authenticate_user!`
   #
