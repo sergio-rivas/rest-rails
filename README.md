@@ -8,7 +8,7 @@ Rails Plugin for quick intelligent API Creation by Tuitu Technology Solutions
 3. Install RestRails:  `rails g rest_rails:install`
 4. Modify initializer and/or mounted route.
 
-## How To Use
+## The Basics
 
 RestRails will automatically create a base API for all standard CRUD actions.
 Just one line of code to implement a powerful REST API.
@@ -52,7 +52,9 @@ destroy      | DELETE | `/api/v1/comments/:id`                       | destroy a
 fetch_column | GET    | `/api/v1/comments/:id/article_id`            | fetch article_id of comment
 fetch_column | GET    | `/api/v1/comments/:id/content`               | fetch content of comment
 
-### INDEX:  GET '/table_name'
+# HOW TO USE THE REST API
+
+## INDEX:  GET '/table_name'
 GET '/articles' will return a JSON response as follows:
 ```
 {
@@ -90,7 +92,7 @@ GET '/articles' will return a JSON response as follows:
 
 The index REST API is by *default* paginated by 100. To go through pages, add the following params to the GET path:
 
-`page=<a_number>`
+`page=<number>`
 
 ex:  '/api/v1/articles?page=2'
 
@@ -98,17 +100,17 @@ Models can also be filtered by a very basic WHERE query param structure.
 
 For Article, the index API point can receive the following paramters:
 
-param | type | example | notes
------ | ---- | ------- | ------
-page  | *Integer* | page=2 | Will paginate by 100 per page.
-article[title] | *String* | article[title]=Some+Title | Will match articles with titles same as the value.
-article\[title\]\[\] | *Array* | article\[title\]\[\]=SomeTitle&article\[title\]\[\]=SomeOtherTitle | Will match articles with title of 'SomeTitle' OR 'SomeOtherTitle'
-article[description] | *String* | article[description]=Some+Description | Will match articles with descriptions same as the value.
-article\[description\]\[\] | *Array* | article\[description\]\[\]=SomeDescription&article\[description\]\[\]=SomeOtherDescription | Will match articles with description of 'SomeDescription' OR 'SomeOtherDescription'
-article[content] | *String* | article[content]=Some+Content | Will match articles with contents same as the value.
-article\[content\]\[\] | *Array* | article\[content\]\[\]=SomeContent&article\[content\]\[\]=SomeOtherContent | Will match articles with content of 'SomeContent' OR 'SomeOtherContent'
+param                      | type      | example          | notes
+-------------------------- | --------- | ---------------- | --------------------
+page                       | *Integer* | page=2           | Will paginate by 100 per page.
+article[title]             | *String*  | article[title]=Some+Title | Will match articles with titles same as the value.
+article\[title\]\[\]       | *Array*   | article\[title\]\[\]=SomeTitle&article\[title\]\[\]=SomeOtherTitle | Will match articles with title of 'SomeTitle' OR 'SomeOtherTitle'
+article[description]       | *String*  | article[description]=Some+Description | Will match articles with descriptions same as the value.
+article\[description\]\[\] | *Array*   | article\[description\]\[\]=SomeDescription&article\[description\]\[\]=SomeOtherDescription | Will match articles with description of 'SomeDescription' OR 'SomeOtherDescription'
+article[content]           | *String*  | article[content]=Some+Content | Will match articles with contents same as the value.
+article\[content\]\[\]     | *Array*   | article\[content\]\[\]=SomeContent&article\[content\]\[\]=SomeOtherContent | Will match articles with content of 'SomeContent' OR 'SomeOtherContent'
 
-### SHOW:  GET '/table_name/:id'
+## SHOW:  GET '/table_name/:id'
 GET '/articles/1' will return a JSON response as follows:
 ```
 {
@@ -137,7 +139,7 @@ GET '/articles/1' will return a JSON response as follows:
 }
 ```
 
-### CREATE:  POST '/table_name'
+## CREATE:  POST '/table_name'
 
 The create paths enforce Rails **strong params**. So only properly structured requests will be allowed.
 POST '/articles' can accept a payload in the following structure:
@@ -183,7 +185,7 @@ If successful (and passes your ActiveRecord validations), the response will be a
   }
 ```
 
-### UPDATE:  PATCH '/table_name/:id'
+## UPDATE:  PATCH '/table_name/:id'
 
 The update paths enforce Rails **strong params**. So only properly structured requests will be allowed.
 PATCH '/articles/1' can accept a payload in the following structure (with one or more columns to be updated):
@@ -228,7 +230,7 @@ If successful (and passes your ActiveRecord validations), the response will be a
   }
 ```
 
-### DESTROY:  DELETE '/table_name'
+## DESTROY:  DELETE '/table_name'
 
 DELETE '/articles/1' only needs the ID number.
 
@@ -243,7 +245,7 @@ If successful (and passes your ActiveRecord validations), the response will be a
 
 **Note:**  If you are using activestorage, the destroy process will also automatically destroy attachments from your bucket.
 
-### FETCH_COLUMN:  GET '/table_name/:id/:column_name'
+## FETCH_COLUMN:  GET '/table_name/:id/:column_name'
 
 GET '/articles/1/title'
 
@@ -288,13 +290,13 @@ And for has_many_attached:
 }
 ```
 
-## ACTIVESTORAGE ATTACHMENTS
+# ACTIVESTORAGE ATTACHMENTS
 
 For activestorage attachment support, the following two routes are added to models using activestorage:
 
 `/table_name/:id/attach/:attachment_name` and `/table_name/:id/unattach/:attachment_id`
 
-### ATTACH:  POST '/table_name/:id/attach/:attachment_name'
+## ATTACH:  POST '/table_name/:id/attach/:attachment_name'
 
 The routes generated for the rest API are based on the naming provided in your ActiveRecord model when using activestorage.
 
@@ -318,7 +320,7 @@ If successful, the response will be as follows:
 }
 ```
 
-### UNATTACH:  DELETE '/table_name/:id/unattach/:attachment_id'
+## UNATTACH:  DELETE '/table_name/:id/unattach/:attachment_id'
 
 *\* Note, Response will fail if the attachment_id provided does not belong to the object.*
 
