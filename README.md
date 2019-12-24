@@ -15,8 +15,8 @@ Just one line of code to implement a powerful REST API.
 
 For Example's sake, let's take the following schema:
 
-**articles:** *title, description, content*
-**comments:** *article_id, content*
+- **articles:** *title, description, content*
+- **comments:** *article_id, content*
 
 Further more, as per ActiveStorage convention, **Article** *has_one_attached :feature_image* & *has_many_attached :content_images*
 
