@@ -3,7 +3,8 @@ module RestRails
   class DataController < ::ApplicationController
     include ApplicationHelper
     skip_before_action :verify_authenticity_token
-    before_action :set_model, only: [:index, :show, :create, :update, :destroy, :fetch_column, :attach, :unattach]
+    before_action :verify_table_permissions!, only: [:create, :update, :destroy, :attach, :unattach]
+    before_action :set_model
     before_action :set_object, only: [:show, :update, :destroy, :fetch_column, :attach, :unattach]
 
     def index
@@ -36,7 +37,7 @@ module RestRails
     end
 
     def create
-      @object = @empty_obj(model_params)
+      @object = @model.new(model_params)
 
       attach_files
       if @object.save
@@ -99,6 +100,7 @@ module RestRails
       # Take the tablename, and make the Model of the relative table_name
       @model = model_for(params[:table_name])
       @empty_obj = @model.new
+      p @empty_obj
     end
 
     def set_object
@@ -157,6 +159,7 @@ module RestRails
     end
 
     def permitted_columns
+      p @empty_obj
       @columns = columns_for(@empty_obj)
       @columns.delete(:id)
       @columns.delete(:created_at)
@@ -165,6 +168,10 @@ module RestRails
       @columns += @columns.select{|x| permit_array?(x)}.map do |attr|
         {attr=>[]}
       end
+    end
+
+    def verify_table_permissions!
+      verify_permitted!(params[:table_name].to_sym)
     end
   end
 end

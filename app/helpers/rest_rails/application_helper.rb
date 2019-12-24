@@ -58,18 +58,11 @@ module RestRails
     end
 
     def columns_for(ar_object)
-      [Hash, :all].each do |y|
-        x = RestRails.permit
-        raise RestRails::Error.new "RestRails initializer permit is not valid!" unless x.is_a?(y) || (x == y)
-      end
-
-      cols = ar_object.class.column_names.map(&:to_sym)
+      table = ar_object.class.table_name.to_sym
+      cols  = ar_object.class.column_names.map(&:to_sym)
       cols += attachments_for(ar_object) if RestRails.active_storage_attachments
 
       return cols if RestRails.permit == :all || RestRails.permit[table] == :all
-
-      table = ar_object.class.table_name.to_sym
-      raise RestRails::Error.new "ACTION NOT PERMITTED" if [:none, nil].include?(RestRails.permit[table])
 
       cols.select{|x| RestRails.permit[table].include?(x) }
     end
@@ -87,6 +80,14 @@ module RestRails
 
       # Take the tablename, and make the Model of the relative table_name
       table_name.classify.constantize # "users" => User
+    end
+
+    def verify_permitted!(table)
+      if [:none, nil].include?(RestRails.permit[table])
+        raise RestRails::Error.new "NOT PERMITTED. Must add table to whitelisted params."
+      elsif !RestRails.permit.is_a?(Hash) && (RestRails.permit != :all)
+        raise RestRails::Error.new "RestRails initializer permit is not valid!"
+      end
     end
   end
 end
