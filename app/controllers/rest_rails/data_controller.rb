@@ -66,7 +66,8 @@ module RestRails
     def fetch_column
       raise RestRails::Error.new "Column '#{params[:column]}' does not exist for #{params[:table_name]} table!" unless columns_for(@object).include?(params[:column])
 
-      render json: {code: 200, msg: "success", value: @object.public_send(params[:column])}
+      col_value = @object.public_send(params[:column])
+      render json: {code: 200, msg: "success", value: prepare_column(col_value)}
     end
 
     def attach

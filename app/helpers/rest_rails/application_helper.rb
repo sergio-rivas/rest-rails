@@ -34,6 +34,14 @@ module RestRails
       Rails.application.routes.url_helpers.rails_blob_url(x, host: host)
     end
 
+    def prepare_column(col_value)
+      if [ActiveStorage::Attached::Many, ActiveStorage::Attached::One].include?(col_value.class)
+        return prepare_attachment(col_value)
+      else
+        return col_value
+      end
+    end
+
     def prepare_attachment(attached)
       if attached.class == ActiveStorage::Attached::Many
         return attached.map{|x| attachment_hash(x) }
