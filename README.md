@@ -20,15 +20,37 @@ For Example's sake, let's take the following schema:
 
 Further more, as per activestorage convention, **Article** *has_one_attached :feature_image* & *has_many_attached :content_images*
 
-Let's say we mount RestRails at `/api/v1`, the Following routes are included:
-- index routes:  `GET /api/v1/articles`, `GET /api/v1/comments`
-- show routes: `GET /api/v1/articles/:id`, `GET /api/v1/comments/:id`
-- create routes: `POST /api/v1/articles`, `POST /api/v1/comments`
-- update routes: `PATCH /api/v1/articles/:id`, `PATCH /api/v1/comments/:id`
-- destroy routes: `DELETE /api/v1/articles/:id`, `DELETE /api/v1/comments/:id`
-- fetch_column routes: `GET /api/v1/articles/:id/:column_name`, `GET /api/v1/comments/:id/:column_name`
-- attach routes *if using active_storage* `POST /api/v1/articles/:id/attach/:attachment_name`, `POST /api/v1/comments/:id/attach/:attachment_name`
-- unattach *if using active_storage* `DELETE /api/v1/articles/:id/unattach/:attachment_id`, `POST /api/v1/comments/:id/unattach/:attachment_id`
+Let's say we mount RestRails at `/api/v1`, the Following routes are included for articles:
+
+### Articles
+
+REST action  | method | route                                        | notes
+------------ | ------ | -------------------------------------------- | ----------------------
+index        | GET    | `/api/v1/articles`                           | index paginated by 100
+show         | GET    | `/api/v1/articles/:id`                       | show for one article
+create       | POST   | `/api/v1/articles`                           | create new article
+update       | GET    | `/api/v1/articles/:id`                       | update an article
+destroy      | DELETE | `/api/v1/articles/:id`                       | destroy an article
+fetch_column | GET    | `/api/v1/articles/:id/title`                 | fetch title of article
+fetch_column | GET    | `/api/v1/articles/:id/description`           | fetch description of article
+fetch_column | GET    | `/api/v1/articles/:id/content`               | fetch content of article
+attach       | POST   | `/api/v1/articles/:id/attach/feature_image`  | attach file to feature_image
+attach       | POST   | `/api/v1/articles/:id/attach/content_images` | attach file to content_images
+
+
+And the following for comments:
+
+### Comments
+
+REST action  | method | route                                        | notes
+------------ | ------ | -------------------------------------------- | ----------------------
+index        | GET    | `/api/v1/comments`                           | index paginated by 100
+show         | GET    | `/api/v1/comments/:id`                       | show for one comment
+create       | POST   | `/api/v1/comments`                           | create new comment
+update       | GET    | `/api/v1/comments/:id`                       | update an comment
+destroy      | DELETE | `/api/v1/comments/:id`                       | destroy an comment
+fetch_column | GET    | `/api/v1/comments/:id/article_id`            | fetch article_id of comment
+fetch_column | GET    | `/api/v1/comments/:id/content`               | fetch content of comment
 
 ### INDEX:  GET '/table_name'
 GET '/articles' will return a JSON response as follows:
@@ -308,8 +330,6 @@ If successful, the response will be as follows:
   "msg": "success"
 }
 ```
-
-
 
 
 
