@@ -49,6 +49,11 @@ module RestRails
       attach_meths.map{|x| x[14..-1].to_sym}
     end
 
+    def columns_for(ar_object)
+      cols = ar_object.class.attribute_names.map(&:to_sym)
+      cols += attachments_for(ar_object)
+    end
+
     # ==========================================================================
     #                 OTHER HELPERS
     # ==========================================================================

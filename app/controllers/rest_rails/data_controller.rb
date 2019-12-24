@@ -36,7 +36,7 @@ module RestRails
     end
 
     def create
-      @object = @model.new(model_params)
+      @object = @empty_obj(model_params)
 
       attach_files
       if @object.save
@@ -64,18 +64,18 @@ module RestRails
     end
 
     def fetch_column
-      raise RestRails::Error.new "Column '#{params[:column]}' does not exist for #{params[:table_name]} table!" unless @model.attribute_names.include?(params[:column])
+      raise RestRails::Error.new "Column '#{params[:column]}' does not exist for #{params[:table_name]} table!" unless columns_for(@object).include?(params[:column])
 
-      render json: {code: 200, value: @object.public_send(params[:column])}
+      render json: {code: 200, msg: "success", value: @object.public_send(params[:column])}
     end
 
     def attach
       # post   '/:table_name/:id/attach/:attachment_name' => 'data#attach'
       raise RestRails::Error.new "No Attached file!" unless params[:attachment].is_a?(ActionDispatch::Http::UploadedFile)
-      raise RestRails::Error.new "Attachment '#{params[:attachment_name]}' does not exist for #{params[:table_name]} table!" unless attachments_for(@model.new).include?(params[:attachment_name].to_sym)
+      raise RestRails::Error.new "Attachment '#{params[:attachment_name]}' does not exist for #{params[:table_name]} table!" unless attachments_for(@empty_obj).include?(params[:attachment_name].to_sym)
 
       @object.public_send(params[:attachment_name].to_sym).attach(params[:attachment])
-      render json: {code: 200, msg: "attached!"}
+      render json: {code: 200, msg: "success"}
     end
 
     def unattach
@@ -97,6 +97,7 @@ module RestRails
 
       # Take the tablename, and make the Model of the relative table_name
       @model = model_for(params[:table_name])
+      @empty_obj = @model.new
     end
 
     def set_object
@@ -124,7 +125,7 @@ module RestRails
       # BASED ON ACTIVE STORAGE
       mn = @model.model_name.singular.to_sym # /users => user
       #
-      file_set = attachments_for(@model.new)
+      file_set = attachments_for(@empty_obj)
       file_set.each do |fs|
         next if params[mn].blank? || params[mn][fs].blank?
         attachment = params[mn][fs]
@@ -153,7 +154,7 @@ module RestRails
 
     def permit_array?(attr)
       permitable_classes = [ActiveStorage::Attached::Many, Array]
-      permitable_classes.include?(@model.new.send(attr).class)
+      permitable_classes.include?(@empty_obj.send(attr).class)
     end
 
     def permitted_columns
@@ -170,7 +171,7 @@ module RestRails
     end
 
     def permitted_attachments
-      file_set = attachments_for(@model.new)
+      file_set = attachments_for(@empty_obj)
       file_set += file_set.select{|x| permit_array?(x)}.map do |attr|
         {attr=>[]}
       end

@@ -18,7 +18,7 @@ For Example's sake, let's take the following schema:
 - **articles:** *title, description, content*
 - **comments:** *article_id, content*
 
-Further more, as per ActiveStorage convention, **Article** *has_one_attached :feature_image* & *has_many_attached :content_images*
+Further more, as per activestorage convention, **Article** *has_one_attached :feature_image* & *has_many_attached :content_images*
 
 Let's say we mount RestRails at `/api/v1`, the Following routes are included:
 - index routes:  `GET /api/v1/articles`, `GET /api/v1/comments`
@@ -85,6 +85,190 @@ article[description] | *String* | article[description]=Some+Description | Will m
 article\[description\]\[\] | *Array* | article\[description\]\[\]=SomeDescription&article\[description\]\[\]=SomeOtherDescription | Will match articles with description of 'SomeDescription' OR 'SomeOtherDescription'
 article[content] | *String* | article[content]=Some+Content | Will match articles with contents same as the value.
 article\[content\]\[\] | *Array* | article\[content\]\[\]=SomeContent&article\[content\]\[\]=SomeOtherContent | Will match articles with content of 'SomeContent' OR 'SomeOtherContent'
+
+### SHOW:  GET '/table_name/:id'
+GET '/articles/1' will return a JSON response as follows:
+```
+{
+  "code": 200,
+  "object": {
+    "id": 1,
+    "created_at": "2019-08-27T08:22:19.357Z",
+    "updated_at": "2019-08-27T08:22:19.499Z",
+    "title": "Discourse on Dystopian Non Fiction",
+    "description": "This is an abstract description used to mislead readers into clicking on the article and take a deeper read.",
+    "content": "Wow, the reader actually clicked! Now let me brainwash him with this heavily opinionated article based on a myriad of unverified sources with the credibility of a personified M&M's...",
+    "feature_image": {
+      "attachment_id": 1,
+      "url": "http://localhost:3000/rails/active_storage/blobs/eyJfcmFpbHMiOnsib--f573ab9452c272881fb/jopmqH0.jpg"
+    },
+    "content_images": [
+      {
+        "attachment_id": 3,
+        "url": "http://localhost:3000/rails/active_storage/blobs/sjfioadifo-8fdjsfaj/fjso.jpg"
+      }, {
+        "attachment_id": 12,
+        "url": "http://localhost:3000/rails/active_storage/blobs/fjiods--k0f09fs/jfdsjk.jpg"
+      }
+    ]
+  }
+}
+```
+
+### CREATE:  POST '/table_name'
+
+The create paths enforce Rails **strong params**. So only properly structured requests will be allowed.
+POST '/articles' can accept a payload in the following structure:
+
+```
+  {
+    "article" {
+      "title": "Discourse on Dystopian Non Fiction",
+      "description": "This is an abstract description used to mislead readers into clicking on the article and take a deeper read.",
+      "content": "Wow, the reader actually clicked! Now let me brainwash him with this heavily opinionated article based on a myriad of unverified sources with the credibility of a personified M&M's..."
+    }
+  }
+```
+
+If successful (and passes your ActiveRecord validations), the response will be as follows:
+
+```
+{
+  "code": 200,
+  "msg": "success",
+  "object": {
+    "id": 1,
+    "created_at": "2019-08-27T08:22:19.357Z",
+    "updated_at": "2019-08-27T08:22:19.357Z",
+    "title": "Discourse on Dystopian Non Fiction",
+    "description": "This is an abstract description used to mislead readers into clicking on the article and take a deeper read.",
+    "content": "Wow, the reader actually clicked! Now let me brainwash him with this heavily opinionated article based on a myriad of unverified sources with the credibility of a personified M&M's...",
+    "feature_image": null,
+    "content_images": []
+  }
+}
+```
+
+**Note:**  If you are using forms to submit data w/ attachments via activestorage, you can also add attachments to the payload sent, as long as it matches the naming of your activestorage attachment, and the form submission content-type is multipart/form_data.
+
+```
+  {
+    "article" {
+      "title": "Discourse on Dystopian Non Fiction",
+      "description": "This is an abstract description used to mislead readers into clicking on the article and take a deeper read.",
+      "feature_image": <uploaded_file>
+    }
+  }
+```
+
+### UPDATE:  PATCH '/table_name/:id'
+
+The update paths enforce Rails **strong params**. So only properly structured requests will be allowed.
+PATCH '/articles/1' can accept a payload in the following structure (with one or more columns to be updated):
+
+```
+  {
+    "article" {
+      "title": "Discourse on Dystopian Non Fiction",
+      "description": "This is an abstract description used to mislead readers into clicking on the article and take a deeper read.",
+      "content": "Wow, the reader actually clicked! Now let me brainwash him with this heavily opinionated article based on a myriad of unverified sources with the credibility of a personified M&M's..."
+    }
+  }
+```
+
+If successful (and passes your ActiveRecord validations), the response will be as follows:
+
+```
+{
+  "code": 200,
+  "msg": "success",
+  "object": {
+    "id": 1,
+    "created_at": "2019-08-27T08:22:19.357Z",
+    "updated_at": "2019-08-27T08:22:19.357Z",
+    "title": "Discourse on Dystopian Non Fiction",
+    "description": "This is an abstract description used to mislead readers into clicking on the article and take a deeper read.",
+    "content": "Wow, the reader actually clicked! Now let me brainwash him with this heavily opinionated article based on a myriad of unverified sources with the credibility of a personified M&M's...",
+    "feature_image": null,
+    "content_images": []
+  }
+}
+```
+
+**Note:**  If you are using forms to submit data w/ attachments via activestorage, you can also add attachments to the payload sent, as long as it matches the naming of your activestorage attachment, and the form submission content-type is multipart/form_data.
+
+```
+  {
+    "article" {
+      "title": "Discourse on Dystopian Non Fiction",
+      "feature_image": <uploaded_file>
+    }
+  }
+```
+
+### DESTROY:  DELETE '/table_name'
+
+DELETE '/articles/1' only needs the ID number.
+
+If successful (and passes your ActiveRecord validations), the response will be as follows:
+
+```
+{
+  "code": 200,
+  "msg": "success"
+}
+```
+
+**Note:**  If you are using activestorage, the destroy process will also automatically destroy attachments from your bucket.
+
+### FETCH_COLUMN:  GET '/table_name/:id/:column_name'
+
+GET '/articles/1/title'
+
+If column exists, the response will be as follows:
+
+```
+{
+  "code": 200,
+  "msg": "success",
+  "value": "Discourse on Dystopian Non Fiction"
+}
+```
+
+**Note:**  If you are using activestorage, you will return the following for has_one_attached:
+
+```
+{
+  "code": 200,
+  "msg": "success",
+  "value": {
+    "attachment_id": 1,
+    "url": "http://localhost:3000/rails/active_storage/blobs/eyJfcmFpbHMiOnsib--f573ab9452c272881fb/jopmqH0.jpg"
+  }
+}
+```
+And for has_many_attached:
+
+```
+{
+  "code": 200,
+  "msg": "success",
+  "value": [
+    {
+      "attachment_id": 3,
+      "url": "http://localhost:3000/rails/active_storage/blobs/sjfioadifo-8fdjsfaj/fjso.jpg"
+    },
+    {
+      "attachment_id": 12,
+      "url": "http://localhost:3000/rails/active_storage/blobs/fjiods--k0f09fs/jfdsjk.jpg"
+    }
+  ]
+}
+```
+
+
+
+
 
 
 ## Contribution
