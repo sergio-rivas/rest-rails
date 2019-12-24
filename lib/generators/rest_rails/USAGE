@@ -1,0 +1,2 @@
+rails generate rest_rails:install
+  ---> This sets up the rest_rails initializer

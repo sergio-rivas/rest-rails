@@ -1,7 +1,8 @@
 require 'json'
 module RestRails
-  class DataController < RestRails::ApplicationController
-    include RestRails::ApplicationHelper
+  class DataController < ::ApplicationController
+    include ApplicationHelper
+    skip_before_action :verify_authenticity_token
     before_action :set_model, only: [:index, :show, :create, :update, :destroy, :fetch_column, :attach, :unattach]
     before_action :set_object, only: [:show, :update, :destroy, :fetch_column, :attach, :unattach]
 
@@ -13,18 +14,25 @@ module RestRails
 
       if params[:page].blank? || (params[:page].to_i < 1)
         if @objects.empty?
-          render json: []
+          @objects = []
         else
-          render json: @objects[0].reject{|x|x.nil?}.map{|x| standardize_json(x) }
+          @objects = @objects[0].reject{|x|x.nil?}.map{|x| standardize_json(x) }
         end
       else
         i = params[:page].to_i - 1
-        render json: @objects[i].reject{|x|x.nil?}.map{|x| standardize_json(x) }
+        objs = @objects[i]
+        if objs.nil?
+          @objects = []
+        else
+          @objects = objs.reject{|x|x.nil?}.map{|x| standardize_json(x) }
+        end
       end
+
+      render json: {code: 200, objects: @objects, count: @objects.count, total: @model.count}
     end
 
     def show
-      render json: {code: 200}.merge(standardize_json(@object))
+      render json: {code: 200, object: standardize_json(@object)}
     end
 
     def create

@@ -1,0 +1,27 @@
+========================================================================
+
+                 _-====-__-======-__-========-_____-============-__
+               _(          All aboard! Now hopping on...          _)
+            OO(              ╦═╗┌─┐┌─┐┌┬┐╦═╗┌─┐┬┬  ┌─┐            )_
+           0  (_             ╠╦╝├┤ └─┐ │ ╠╦╝├─┤││  └─┐             _)
+         o0     (_           ╩╚═└─┘└─┘ ┴ ╩╚═┴ ┴┴┴─┘└─┘            _)
+        o         '=-___-===-_____-========-___________-===-dwb-='
+      .o                                _________
+     . ______          ______________  |         |      _____
+   _()_||__|| ________ |     by     |  |_________|   __||___||__
+  ( R.R.    | |      | |   Tuitu    | __Y______00_| |_         _|
+ /-OO----OO""="OO--OO"="OO--------OO"="OO-------OO"="OO-------OO"=P
+
+========================================================================
+
+Next Steps:
+
+1) Modify the initializer in /config/initializers/rest_rails.rb
+2) Read the documentation at: https://github.com/sergio-rivas/rest-rails
+3) experiment and have fun!
+
+---*Bonus*---
+make sure to send feedback and feature requests!
+And issues too, if you encounter strange errors.
+
+Pull Requests welcome~

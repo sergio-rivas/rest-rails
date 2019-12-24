@@ -14,24 +14,32 @@ module RestRails
       h = {}
       attachment_types = attachments_for(ar_object)
       attachment_types.each do |att|
-        attached = self.public_send(att)
-        att_h    = {attachment_id: att.id, url: link_for_attached(attached)}
-        h[att]   = att_h
+        attached = ar_object.public_send(att)
+        next if attached.nil?
+        h[att]   = prepare_attachment(attached)
       end
       return h
     end
 
+    def attachment_hash(attached)
+      {attachment_id: attached.id, url: blob_link(attached)}
+    end
+
     def blob_link(x)
-      host = RestRails.domain
+      if Rails.env == "production"
+        host = RestRails.production_domain || ""
+      else
+        host = RestRails.development_domain || "http://localhost:3000"
+      end
       Rails.application.routes.url_helpers.rails_blob_url(x, host: host)
     end
 
-    def link_for_attached(attached)
+    def prepare_attachment(attached)
       if attached.class == ActiveStorage::Attached::Many
-        return attached.map{|x| blob_link(x) }
+        return attached.map{|x| attachment_hash(x) }
       elsif attached.class == ActiveStorage::Attached::One
         x = attached.attachment
-        return blob_link(x) unless x.nil?
+        return attachment_hash(x) unless x.nil?
       end
     end
 
