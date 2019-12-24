@@ -361,10 +361,10 @@ If successful, the response will be as follows:
 ```
 
 
-
-
 ## Contribution
 Here are some features in need of development.
-- Add way to custom permit columns (i.e. exclude columns from permitted params for model's update/create API points).
 - Support different popular attachment gems.
 - Add Locale fetching based on page-routes.
+- Add standarized testing rspecs.
+- Add support for switching activestorage sources
+- Add support to allow user to provide any before_actions wanted.
