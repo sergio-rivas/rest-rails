@@ -61,11 +61,27 @@ module RestRails
       table = ar_object.class.table_name.to_sym
       cols  = ar_object.class.column_names.map(&:to_sym)
       cols += attachments_for(ar_object) if RestRails.active_storage_attachments
+      cols += nested_attributes_for(ar_object) unless ar_object.class.nested_attributes_options.blank?
 
       return cols if RestRails.permit == :all || RestRails.permit[table] == :all
 
       cols.select{|x| RestRails.permit[table].include?(x) }
     end
+
+    def nested_attributes_for(ar_object)
+      tables = ar_object.class.nested_attributes_options.keys
+      models = tables.map{|x| sym_to_class(x.to_s.classify.constantize)}
+
+      models.map do |x|
+        key = "#{x.model_name.singular}_attributes".to_sym
+        cols = x.column_names.map(&:to_sym)
+        cols.delete(:id)
+
+        {key => cols}
+      end
+    end
+
+
 
     # ==========================================================================
     #                 OTHER HELPERS
