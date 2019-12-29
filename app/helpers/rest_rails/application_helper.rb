@@ -70,7 +70,7 @@ module RestRails
 
     def nested_attributes_for(ar_object)
       tables = ar_object.class.nested_attributes_options.keys
-      models = tables.map{|x| sym_to_class(x.to_s.classify.constantize)}
+      models = tables.map{|x| x.to_s.classify.constantize}
 
       models.map do |x|
         key = "#{x.model_name.singular}_attributes".to_sym
