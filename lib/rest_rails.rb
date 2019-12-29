@@ -12,4 +12,11 @@ module RestRails
   def self.configure
     yield self
   end
+
+  def self.path_for(ar_obj)
+    root_path = RestRails::Engine.mounted_path
+    table = ar_obj.class.table_name
+    return "#{root_path}/#{table}" if ar_obj.id.nil?
+    return "#{root_path}/#{table}/#{ar_obj.id}"
+  end
 end
