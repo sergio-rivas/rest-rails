@@ -52,7 +52,7 @@ REST action  | method | route                                        | notes
 index        | GET    | `/api/v1/articles`                           | index paginated by 100
 show         | GET    | `/api/v1/articles/:id`                       | show for one article
 create       | POST   | `/api/v1/articles`                           | create new article
-update       | GET    | `/api/v1/articles/:id`                       | update an article
+update       | PATCH  | `/api/v1/articles/:id`                       | update an article
 destroy      | DELETE | `/api/v1/articles/:id`                       | destroy an article
 fetch_column | GET    | `/api/v1/articles/:id/title`                 | fetch title of article
 fetch_column | GET    | `/api/v1/articles/:id/description`           | fetch description of article
@@ -70,7 +70,7 @@ REST action  | method | route                                        | notes
 index        | GET    | `/api/v1/comments`                           | index paginated by 100
 show         | GET    | `/api/v1/comments/:id`                       | show for one comment
 create       | POST   | `/api/v1/comments`                           | create new comment
-update       | GET    | `/api/v1/comments/:id`                       | update an comment
+update       | PATCH  | `/api/v1/comments/:id`                       | update an comment
 destroy      | DELETE | `/api/v1/comments/:id`                       | destroy an comment
 fetch_column | GET    | `/api/v1/comments/:id/article_id`            | fetch article_id of comment
 fetch_column | GET    | `/api/v1/comments/:id/content`               | fetch content of comment
