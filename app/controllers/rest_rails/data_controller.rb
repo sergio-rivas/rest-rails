@@ -9,7 +9,7 @@ module RestRails
 
     def index
       p_hash = index_params.to_h
-      ppage = (params[:per_page] || 20).to_i
+      ppage = (params[:per_page] || 100).to_i
       page =  (params[:page] || 1).to_i
       off = (page-1) * ppage
 
