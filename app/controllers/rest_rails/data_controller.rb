@@ -154,6 +154,7 @@ module RestRails
     end
 
     def permit_array?(attr)
+      return false unless attr.is_a? Symbol
       permitable_classes = [ActiveStorage::Attached::Many, Array]
       permitable_classes.include?(@empty_obj.send(attr).class)
     end

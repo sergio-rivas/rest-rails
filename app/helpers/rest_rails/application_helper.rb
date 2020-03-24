@@ -70,11 +70,10 @@ module RestRails
 
     def nested_attributes_for(ar_object)
       tables = ar_object.class.nested_attributes_options.keys
-      models = tables.map{|x| x.to_s.classify.constantize}
 
-      models.map do |x|
-        key = "#{x.model_name.singular}_attributes".to_sym
-        cols = x.column_names.map(&:to_sym)
+      tables.map do |x|
+        cols = x.to_s.classify.constantize.column_names.map(&:to_sym)
+        key = "#{x}_attributes".to_sym
         cols.delete(:id)
 
         {key => cols}
