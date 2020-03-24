@@ -9,25 +9,14 @@ module RestRails
 
     def index
       p_hash = index_params.to_h
+      ppage = (params[:per_page] || 20).to_i
+      page =  (params[:page] || 1).to_i
+      off = (page-1) * ppage
 
-      @objects = @model.all.in_groups_of(100) if p_hash.blank?
-      @objects = @model.where(p_hash).in_groups_of(100) if p_hash.present?
+      base_query = p_hash.blank? ? @model.all : @model.where(p_hash)
 
-      if params[:page].blank? || (params[:page].to_i < 1)
-        if @objects.empty?
-          @objects = []
-        else
-          @objects = @objects[0].reject{|x|x.nil?}.map{|x| standardize_json(x) }
-        end
-      else
-        i = params[:page].to_i - 1
-        objs = @objects[i]
-        if objs.nil?
-          @objects = []
-        else
-          @objects = objs.reject{|x|x.nil?}.map{|x| standardize_json(x) }
-        end
-      end
+      @objects = base_query.order(:id).limit(ppage).offset(off)
+      @objects.map!{|x| standardize_json(x) }
 
       render json: {code: 200, objects: @objects, count: @objects.count, total: @model.count}
     end
