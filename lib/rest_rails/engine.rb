@@ -4,7 +4,7 @@ module RestRails
 
     def self.mounted_path
       route = Rails.application.routes.routes.detect do |route|
-        route.app == self
+        self.in?([route.app, route.app.app])
       end
       route && route.path
     end
