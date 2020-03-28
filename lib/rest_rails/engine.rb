@@ -6,7 +6,7 @@ module RestRails
       route = Rails.application.routes.routes.detect do |route|
         self.in?([route.app, route.app.app])
       end
-      route && route.path
+      route && (route.path.spec || route.path)
     end
   end
 end
