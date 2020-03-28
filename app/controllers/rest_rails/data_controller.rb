@@ -2,7 +2,7 @@ require 'json'
 module RestRails
   class DataController < ::ApplicationController
     include ApplicationHelper
-    skip_before_action :verify_authenticity_token
+    # skip_before_action :verify_authenticity_token
     before_action :verify_table_permissions!, only: [:create, :update, :destroy, :attach, :unattach]
     before_action :set_model
     before_action :set_object, only: [:show, :update, :destroy, :fetch_column, :attach, :unattach]
@@ -16,13 +16,10 @@ module RestRails
       base_query = p_hash.blank? ? @model.all : @model.where(p_hash)
 
       @objects = base_query.order(:id).limit(ppage).offset(off)
-      @objects.map!{|x| standardize_json(x) }
-
-      render json: {code: 200, objects: @objects, count: @objects.count, total: @model.count}
     end
 
     def show
-      render json: {code: 200, object: standardize_json(@object)}
+      @object
     end
 
     def create
@@ -30,34 +27,33 @@ module RestRails
 
       attach_files
       if @object.save
-        render json: {code: 200, msg: "success", object: standardize_json(@object)}
+        yield(@object)
       else
-        render json: {code: 300, msg: "FAILED!"}
+        yield(nil)
       end
     end
 
     def update
       attach_files
       if @object.update(model_params)
-        render json: {code: 200, msg: "success", object: standardize_json(@object)}
+        yield(@object)
       else
-        render json: {code: 300, msg: "FAILED!"}
+        yield(nil)
       end
     end
 
     def destroy
       if @object.destroy
-        render json: {code: 200, msg: "success"}
+        yield(true)
       else
-        render json: {code: 300, msg: "FAILED!"}
+        yield(false)
       end
     end
 
     def fetch_column
       raise RestRails::Error.new "Column '#{params[:column]}' does not exist for #{params[:table_name]} table!" unless columns_for(@object).include?(params[:column])
 
-      col_value = @object.public_send(params[:column])
-      render json: {code: 200, msg: "success", value: prepare_column(col_value)}
+      @col_value = @object.public_send(params[:column])
     end
 
     def attach
@@ -66,7 +62,6 @@ module RestRails
       raise RestRails::Error.new "Attachment '#{params[:attachment_name]}' does not exist for #{params[:table_name]} table!" unless attachments_for(@empty_obj).include?(params[:attachment_name].to_sym)
 
       @object.public_send(params[:attachment_name].to_sym).attach(params[:attachment])
-      render json: {code: 200, msg: "success"}
     end
 
     def unattach
@@ -76,8 +71,6 @@ module RestRails
       raise RestRails::Error.new "Unauthorized! Attachment does not belong to object!" unless (@object.id == att.record_id) && (@object.is_a? att.record_type.constantize)
 
       att.purge
-
-      render json: {code: 200, msg: "success"}
     end
 
     private
