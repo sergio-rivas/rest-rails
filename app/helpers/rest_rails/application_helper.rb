@@ -74,7 +74,7 @@ module RestRails
       tables.map do |x|
         cols = x.to_s.classify.constantize.column_names.map(&:to_sym)
         key = "#{x}_attributes".to_sym
-        cols.delete(:id)
+        cols << :_destroy
 
         {key => cols}
       end
