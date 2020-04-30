@@ -9,6 +9,10 @@ module RestRails
 
     private
 
+    def verify_authenticity_token
+      true
+    end
+
     def not_found(exception)
       if RestRails.debug
         raise exception

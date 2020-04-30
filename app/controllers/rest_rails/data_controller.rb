@@ -2,7 +2,7 @@ require 'json'
 module RestRails
   class DataController < ::ApplicationController
     include ApplicationHelper
-    skip_before_action :verify_authenticity_token
+    # skip_before_action :verify_authenticity_token, if: -> {self.respond_to?("verify_authenticity_token")}
     before_action :verify_table_permissions!, only: [:create, :update, :destroy, :attach, :unattach]
     before_action :set_model
     before_action :set_object, only: [:show, :update, :destroy, :fetch_column, :attach, :unattach]
