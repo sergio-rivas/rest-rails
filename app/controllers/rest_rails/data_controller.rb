@@ -16,7 +16,7 @@ module RestRails
       base_query = p_hash.blank? ? @model.all : @model.where(p_hash)
 
       @objects = base_query.order(:id).limit(ppage).offset(off)
-      @objects.map!{|x| standardize_json(x) }
+      @objects = @objects.map{|x| standardize_json(x) }
 
       render json: {code: 200, objects: @objects, count: @objects.count, total: @model.count}
     end
