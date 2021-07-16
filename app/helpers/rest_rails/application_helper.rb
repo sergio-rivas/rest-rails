@@ -69,18 +69,18 @@ module RestRails
     end
 
     def nested_attributes_for(ar_object)
-      tables = ar_object.class.nested_attributes_options.keys
+      ar_model = ar_object.class
+      tables = ar_model.nested_attributes_options.keys
 
       tables.map do |x|
-        cols = x.to_s.classify.constantize.column_names.map(&:to_sym)
+        nested_model = ar_model.reflect_on_association(x).klass
+        cols = nested_model.column_names.map(&:to_sym)
         key = "#{x}_attributes".to_sym
         cols << :_destroy
 
         {key => cols}
       end
     end
-
-
 
     # ==========================================================================
     #                 OTHER HELPERS
