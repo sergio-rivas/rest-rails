@@ -92,7 +92,7 @@ module RestRails
       raise  RestRails::Error.new "Table '#{table_name}' does not exist in your database!" unless tables.keys.include?(table_name)
 
       # Take the tablename, and make the Model of the relative table_name
-      table_name.classify.constantize # "users" => User
+      tables[table_name]
     end
 
     def verify_permitted!(table)
