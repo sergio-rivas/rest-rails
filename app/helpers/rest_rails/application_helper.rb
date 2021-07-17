@@ -87,11 +87,9 @@ module RestRails
     # ==========================================================================
 
     def model_for(table_name)
-      ignored = ["active_storage_blobs", "active_storage_attachments",
-        "schema_migrations", "ar_internal_metadata"]
-      tables = ActiveRecord::Base.connection.tables.reject{ |x| ignored.include?(x) }
+      tables = ActiveRecord::Base.descendants.reject(&:abstract_class).index_by(&:table_name)
 
-      raise  RestRails::Error.new "Table '#{table_name}' does not exist in your database!" unless tables.include?(table_name)
+      raise  RestRails::Error.new "Table '#{table_name}' does not exist in your database!" unless tables.keys.include?(table_name)
 
       # Take the tablename, and make the Model of the relative table_name
       table_name.classify.constantize # "users" => User
